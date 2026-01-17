@@ -47,6 +47,19 @@ function formatDateMaybeTimeUtc(d: Date, hasTime?: boolean): string {
   return `${date} ${hh}:${mm}`
 }
 
+function formatYearMonthLabel(yearMonth: string): string {
+  const m = /^(\d{4})-(\d{2})$/.exec(yearMonth)
+  if (!m) return yearMonth
+  const year = Number(m[1])
+  const month = Number(m[2])
+  if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) return yearMonth
+
+  // Use UTC so it matches the app's month bucketing.
+  const d = new Date(Date.UTC(year, month - 1, 1))
+  const monthName = new Intl.DateTimeFormat(undefined, { month: 'long', timeZone: 'UTC' }).format(d)
+  return `${monthName}, ${year}`
+}
+
 type Props = {
   yearMonth: string
   transactions: NormalizedTransaction[]
@@ -152,7 +165,7 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
     <section className="breakdown" aria-label={`Breakdown for ${yearMonth}`}>
       <div className="breakdown__header">
         <div>
-          <div className="breakdown__title">{yearMonth} breakdown</div>
+          <div className="breakdown__title">{formatYearMonthLabel(yearMonth)}</div>
           <div className="breakdown__subtitle">
             {txs.length} transactions • Total{' '}
             <span className={isHigh ? 'money--high' : undefined}>{formatUsd(total)}</span>
@@ -164,7 +177,7 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
       </div>
 
       <div className="breakdownGrid">
-        <div className="breakdownCard">
+        <div className="breakdownCardPlain">
           <div className="breakdownCard__title">Top merchants</div>
           {topMerchants.length === 0 ? (
             <div className="breakdownCard__empty">No rows for this month.</div>
@@ -192,7 +205,7 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
           )}
         </div>
 
-        <div className="breakdownCard">
+        <div className="breakdownCardPlain">
           <div className="txHeaderRow txHeaderRow--top">
             <div className="breakdownCard__title txHeader__title">Transactions</div>
             <label className="txControl">

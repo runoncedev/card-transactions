@@ -273,6 +273,14 @@
   min-width: 0;
 }
 
+.breakdownCardPlain {
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  min-width: 0;
+}
+
 .breakdownCard__title {
   font-weight: 650;
   margin-bottom: 0.5rem;
