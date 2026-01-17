@@ -27,6 +27,10 @@
   margin: 1rem 0;
 }
 
+.dropzonePanel {
+  margin: 1rem 0;
+}
+
 .panel--error {
   border-color: rgba(220, 80, 80, 0.45);
   background: rgba(220, 80, 80, 0.1);
@@ -135,10 +139,11 @@
 }
 
 .chart {
-  border: 1px solid rgba(127, 127, 127, 0.25);
-  background: rgba(127, 127, 127, 0.08);
-  border-radius: 14px;
-  padding: 1rem;
+  /* cardless look */
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
   margin: 1rem 0;
 }
 

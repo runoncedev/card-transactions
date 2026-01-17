@@ -155,7 +155,7 @@ function App() {
         </div>
       )}
 
-      <section className="panel">
+      <section className="dropzonePanel">
         <FileDropzone onFileText={onFileText} />
       </section>
     </div>
