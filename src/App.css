@@ -256,6 +256,38 @@
   margin-bottom: 0.5rem;
 }
 
+.breakdownCard__titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.breakdownCard__titleRow .breakdownCard__title {
+  margin-bottom: 0;
+}
+
+.txSort {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.txSort__label {
+  opacity: 0.75;
+}
+
+.txSort__select {
+  color: inherit;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(127, 127, 127, 0.18);
+  border-radius: 10px;
+  padding: 0.35rem 0.5rem;
+}
+
 .breakdownCard__empty {
   opacity: 0.75;
 }

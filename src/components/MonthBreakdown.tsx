@@ -1,6 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type NormalizedTransaction } from '../lib/transactions'
 
+type TxSortMode =
+  | 'time_desc'
+  | 'time_asc'
+  | 'merchant_asc'
+  | 'merchant_desc'
+  | 'amount_desc'
+  | 'amount_asc'
+
+function sortModeLabel(mode: TxSortMode): string {
+  switch (mode) {
+    case 'time_desc':
+      return 'Time (newest first)'
+    case 'time_asc':
+      return 'Time (oldest first)'
+    case 'merchant_asc':
+      return 'Merchant (A → Z)'
+    case 'merchant_desc':
+      return 'Merchant (Z → A)'
+    case 'amount_desc':
+      return 'Amount (high → low)'
+    case 'amount_asc':
+      return 'Amount (low → high)'
+  }
+}
+
 function formatUsd(amount: number): string {
   return new Intl.NumberFormat(undefined, {
     style: 'currency',
@@ -29,11 +54,58 @@ type Props = {
 }
 
 export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
-  const txs = useMemo(() => {
-    return transactions
-      .filter((t) => t.yearMonth === yearMonth)
-      .sort((a, b) => b.date.getTime() - a.date.getTime())
-  }, [transactions, yearMonth])
+  const [txSortMode, setTxSortMode] = useState<TxSortMode>('time_desc')
+
+  const txs = useMemo(() => transactions.filter((t) => t.yearMonth === yearMonth), [transactions, yearMonth])
+
+  const txsForDisplay = useMemo(() => {
+    const withIdx = txs.map((t, idx) => ({ t, idx }))
+    const cmp = (a: { t: NormalizedTransaction; idx: number }, b: { t: NormalizedTransaction; idx: number }) => {
+      const at = a.t
+      const bt = b.t
+
+      const timeA = at.date.getTime()
+      const timeB = bt.date.getTime()
+
+      const merchantA = at.merchantName.trim().toLocaleLowerCase()
+      const merchantB = bt.merchantName.trim().toLocaleLowerCase()
+
+      const amountA = at.amountUsd
+      const amountB = bt.amountUsd
+
+      let primary = 0
+      switch (txSortMode) {
+        case 'time_desc':
+          primary = timeB - timeA
+          break
+        case 'time_asc':
+          primary = timeA - timeB
+          break
+        case 'merchant_asc':
+          primary = merchantA.localeCompare(merchantB)
+          break
+        case 'merchant_desc':
+          primary = merchantB.localeCompare(merchantA)
+          break
+        case 'amount_desc':
+          primary = amountB - amountA
+          break
+        case 'amount_asc':
+          primary = amountA - amountB
+          break
+      }
+      if (primary !== 0) return primary
+
+      // Tie-breakers for deterministic order:
+      // - Always break ties by time (newest first)
+      // - Then by original index (stable)
+      const timeTie = timeB - timeA
+      if (timeTie !== 0) return timeTie
+      return a.idx - b.idx
+    }
+
+    return withIdx.sort(cmp).map(({ t }) => t)
+  }, [txs, txSortMode])
 
   const txListRef = useRef<HTMLDivElement | null>(null)
   const [showTxFade, setShowTxFade] = useState(false)
@@ -55,7 +127,7 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
       el.removeEventListener('scroll', compute)
       window.removeEventListener('resize', compute)
     }
-  }, [yearMonth, txs.length])
+  }, [yearMonth, txsForDisplay.length, txSortMode])
 
   const total = txs.reduce((sum, t) => sum + t.amountUsd, 0)
   const isHigh = total > 3000
@@ -107,13 +179,30 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
         </div>
 
         <div className="breakdownCard">
-          <div className="breakdownCard__title">Transactions (newest first)</div>
+          <div className="breakdownCard__titleRow">
+            <div className="breakdownCard__title">Transactions</div>
+            <label className="txSort">
+              <span className="txSort__label">Sort</span>
+              <select
+                className="txSort__select"
+                value={txSortMode}
+                onChange={(e) => setTxSortMode(e.target.value as TxSortMode)}
+              >
+                <option value="time_desc">{sortModeLabel('time_desc')}</option>
+                <option value="time_asc">{sortModeLabel('time_asc')}</option>
+                <option value="merchant_asc">{sortModeLabel('merchant_asc')}</option>
+                <option value="merchant_desc">{sortModeLabel('merchant_desc')}</option>
+                <option value="amount_desc">{sortModeLabel('amount_desc')}</option>
+                <option value="amount_asc">{sortModeLabel('amount_asc')}</option>
+              </select>
+            </label>
+          </div>
           {txs.length === 0 ? (
             <div className="breakdownCard__empty">No rows for this month.</div>
           ) : (
             <div className={`txListWrap ${showTxFade ? 'txListWrap--fade' : ''}`} aria-hidden="false">
               <div className="txList" role="list" ref={txListRef}>
-                {txs.slice(0, 200).map((t, idx) => (
+                {txsForDisplay.slice(0, 200).map((t, idx) => (
                   <div className="txRow" role="listitem" key={`${t.yearMonth}-${t.date.toISOString()}-${idx}`}>
                     <div className="txRow__left">
                       <div className="txRow__merchant">{t.merchantName}</div>
@@ -122,7 +211,9 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
                     <div className="txRow__amount">{formatUsd(t.amountUsd)}</div>
                   </div>
                 ))}
-                {txs.length > 200 && <div className="txRow txRow--more">Showing first 200 of {txs.length}</div>}
+                {txsForDisplay.length > 200 && (
+                  <div className="txRow txRow--more">Showing first 200 of {txsForDisplay.length}</div>
+                )}
               </div>
             </div>
           )}
