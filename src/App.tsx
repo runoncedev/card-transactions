@@ -1,8 +1,8 @@
-import './App.css'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import './App.css'
 import { FileDropzone } from './components/FileDropzone'
-import { MonthlySpendChart } from './components/MonthlySpendChart'
 import { MonthBreakdown } from './components/MonthBreakdown'
+import { MonthlySpendChart } from './components/MonthlySpendChart'
 import { computeMonthlySpendFromCsvText, type ParseResult } from './lib/transactions'
 
 function App() {
@@ -81,32 +81,35 @@ function App() {
       {result && (
         <>
           <section className="panel">
-            <div className="summaryLine">
-              <span>
-                <span className="summaryLine__label">Included</span>{' '}
-                <span className="summaryLine__value">{result.summary.includedRows}</span>
-              </span>
-              <span className="summaryLine__sep">•</span>
-              <span>
-                <span className="summaryLine__label">Ignored</span>{' '}
-                <span className="summaryLine__value">{result.summary.ignoredRows}</span>
-              </span>
-              <span className="summaryLine__sep">•</span>
-              <span>
-                <span className="summaryLine__label">Months</span>{' '}
-                <span className="summaryLine__value">{result.monthTotals.length}</span>
-              </span>
-              {dateRange && (
-                <>
-                  <span className="summaryLine__sep">•</span>
-                  <span className="mono">
-                    <span className="summaryLine__label">Range</span>{' '}
-                    <span className="summaryLine__value">
-                      {dateRange.earliest.toISOString().slice(0, 10)} → {dateRange.latest.toISOString().slice(0, 10)}
+            <div className="summaryBar">
+              <div className="summaryLine">
+                <span>
+                  <span className="summaryLine__label">Included</span>{' '}
+                  <span className="summaryLine__value">{result.summary.includedRows}</span>
+                </span>
+                <span className="summaryLine__sep">•</span>
+                <span>
+                  <span className="summaryLine__label">Ignored</span>{' '}
+                  <span className="summaryLine__value">{result.summary.ignoredRows}</span>
+                </span>
+                <span className="summaryLine__sep">•</span>
+                <span>
+                  <span className="summaryLine__label">Months</span>{' '}
+                  <span className="summaryLine__value">{result.monthTotals.length}</span>
+                </span>
+                {dateRange && (
+                  <>
+                    <span className="summaryLine__sep">•</span>
+                    <span className="mono">
+                      <span className="summaryLine__label">Range</span>{' '}
+                      <span className="summaryLine__value">
+                        {dateRange.earliest.toISOString().slice(0, 10)} → {dateRange.latest.toISOString().slice(0, 10)}
+                      </span>
                     </span>
-                  </span>
-                </>
-              )}
+                  </>
+                )}
+              </div>
+              {fileName && <div className="summaryFile mono">{fileName}</div>}
             </div>
 
             {result.summary.warnings.length > 0 && (
@@ -154,11 +157,6 @@ function App() {
 
       <section className="panel">
         <FileDropzone onFileText={onFileText} />
-        {fileName && (
-          <div className="meta">
-            Loaded: <span className="mono">{fileName}</span>
-          </div>
-        )}
       </section>
     </div>
   )
