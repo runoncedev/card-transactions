@@ -55,11 +55,15 @@ type Props = {
 
 export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
   const [txSortMode, setTxSortMode] = useState<TxSortMode>('time_desc')
+  const [merchantFilter, setMerchantFilter] = useState('')
 
   const txs = useMemo(() => transactions.filter((t) => t.yearMonth === yearMonth), [transactions, yearMonth])
 
   const txsForDisplay = useMemo(() => {
-    const withIdx = txs.map((t, idx) => ({ t, idx }))
+    const q = merchantFilter.trim().toLocaleLowerCase()
+    const filtered = q ? txs.filter((t) => t.merchantName.toLocaleLowerCase().includes(q)) : txs
+
+    const withIdx = filtered.map((t, idx) => ({ t, idx }))
     const cmp = (a: { t: NormalizedTransaction; idx: number }, b: { t: NormalizedTransaction; idx: number }) => {
       const at = a.t
       const bt = b.t
@@ -105,7 +109,7 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
     }
 
     return withIdx.sort(cmp).map(({ t }) => t)
-  }, [txs, txSortMode])
+  }, [txs, txSortMode, merchantFilter])
 
   const txListRef = useRef<HTMLDivElement | null>(null)
   const [showTxFade, setShowTxFade] = useState(false)
@@ -179,12 +183,11 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
         </div>
 
         <div className="breakdownCard">
-          <div className="breakdownCard__titleRow">
-            <div className="breakdownCard__title">Transactions</div>
-            <label className="txSort">
-              <span className="txSort__label">Sort</span>
+          <div className="txHeaderRow txHeaderRow--top">
+            <div className="breakdownCard__title txHeader__title">Transactions</div>
+            <label className="txControl">
               <select
-                className="txSort__select"
+                className="txControl__select"
                 value={txSortMode}
                 onChange={(e) => setTxSortMode(e.target.value as TxSortMode)}
               >
@@ -196,6 +199,20 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
                 <option value="amount_asc">{sortModeLabel('amount_asc')}</option>
               </select>
             </label>
+          </div>
+
+          <div className="txHeaderRow txHeaderRow--bottom">
+            <label className="txControl">
+              <input
+                className="txControl__input"
+                value={merchantFilter}
+                onChange={(e) => setMerchantFilter(e.target.value)}
+                placeholder="Filter…"
+              />
+            </label>
+            <div className="breakdownCard__subtle txHeader__count">
+              {txsForDisplay.length} / {txs.length}
+            </div>
           </div>
           {txs.length === 0 ? (
             <div className="breakdownCard__empty">No rows for this month.</div>

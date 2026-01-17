@@ -256,19 +256,59 @@
   margin-bottom: 0.5rem;
 }
 
-.breakdownCard__titleRow {
+.breakdownCard__subtle {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.txHeaderRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 1.1rem;
+  flex-wrap: nowrap;
+}
+
+.txHeaderRow--top {
+  margin-bottom: 0.35rem;
+  justify-content: flex-start;
+  gap: 0.6rem;
+}
+
+.txHeaderRow--bottom {
   margin-bottom: 0.5rem;
 }
 
-.breakdownCard__titleRow .breakdownCard__title {
+.txHeader__title {
   margin-bottom: 0;
+  flex: 0 0 auto;
 }
 
-.txSort {
+.txHeaderRow--bottom .txControl {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.txHeaderRow--bottom .txControl__input {
+  width: 100%;
+}
+
+.txHeader__count {
+  flex: 0 0 auto;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.txControls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.txControl {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -276,11 +316,12 @@
   opacity: 0.9;
 }
 
-.txSort__label {
+.txControl__label {
   opacity: 0.75;
 }
 
-.txSort__select {
+.txControl__select,
+.txControl__input {
   color: inherit;
   background: rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(127, 127, 127, 0.18);
@@ -288,6 +329,20 @@
   padding: 0.35rem 0.5rem;
 }
 
+.txControl__input {
+  width: 160px;
+}
+
+@media (max-width: 820px) {
+  .txHeaderRow {
+    flex-wrap: wrap;
+  }
+
+  .txControls {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
 .breakdownCard__empty {
   opacity: 0.75;
 }
