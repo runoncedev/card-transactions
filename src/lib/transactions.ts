@@ -29,6 +29,7 @@ export type NormalizedTransaction = {
   type: string
   merchantName: string
   amountUsd: number // positive = spend, negative = refund
+  hasTime?: boolean
 }
 
 export type ParseSummary = {
@@ -79,6 +80,7 @@ function normalizeRow(row: CsvRow): NormalizedTransaction | { warning: string } 
   if (!dateStr) return { warning: 'Row missing date' }
   const d = new Date(dateStr)
   if (!Number.isFinite(d.getTime())) return { warning: `Invalid date: ${dateStr}` }
+  const hasTime = /:\d{2}/.test(dateStr)
 
   const status = (row.status ?? '').trim()
   const type = (row.type ?? '').trim()
@@ -104,6 +106,7 @@ function normalizeRow(row: CsvRow): NormalizedTransaction | { warning: string } 
     type,
     merchantName,
     amountUsd,
+    hasTime,
   }
 }
 

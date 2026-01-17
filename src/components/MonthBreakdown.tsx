@@ -14,6 +14,14 @@ function formatDateUtc(d: Date): string {
   return d.toISOString().slice(0, 10)
 }
 
+function formatDateMaybeTimeUtc(d: Date, hasTime?: boolean): string {
+  const date = formatDateUtc(d)
+  if (!hasTime) return date
+  const hh = String(d.getUTCHours()).padStart(2, '0')
+  const mm = String(d.getUTCMinutes()).padStart(2, '0')
+  return `${date} ${hh}:${mm}`
+}
+
 type Props = {
   yearMonth: string
   transactions: NormalizedTransaction[]
@@ -109,7 +117,7 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
                   <div className="txRow" role="listitem" key={`${t.yearMonth}-${t.date.toISOString()}-${idx}`}>
                     <div className="txRow__left">
                       <div className="txRow__merchant">{t.merchantName}</div>
-                      <div className="txRow__meta mono">{formatDateUtc(t.date)} • {t.type}</div>
+                      <div className="txRow__meta mono">{formatDateMaybeTimeUtc(t.date, t.hasTime)}</div>
                     </div>
                     <div className="txRow__amount">{formatUsd(t.amountUsd)}</div>
                   </div>
