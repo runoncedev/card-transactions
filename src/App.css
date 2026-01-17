@@ -51,7 +51,8 @@
 }
 
 .mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
   font-size: 0.95em;
 }
 
@@ -241,12 +242,14 @@
 }
 
 .breakdown__title {
-  font-weight: 650;
+  font-weight: 750;
+  font-size: 1.35rem;
+  line-height: 1.2;
 }
 
 .breakdown__subtitle {
   opacity: 0.75;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   margin-top: 0.15rem;
 }
 
@@ -262,7 +265,7 @@
 .breakdownGrid {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 .breakdownCard {
@@ -277,13 +280,17 @@
   border: 0;
   background: transparent;
   border-radius: 0;
-  padding: 0;
+  padding: 0.15rem 0;
   min-width: 0;
 }
 
 .breakdownCard__title {
-  font-weight: 650;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 1.12rem;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.9;
+  margin-bottom: 0.6rem;
 }
 
 .breakdownCard__subtle {
@@ -453,7 +460,7 @@
 }
 
 .txListWrap::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   right: 0;
