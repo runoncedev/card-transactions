@@ -56,6 +56,7 @@ type Props = {
 export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
   const [txSortMode, setTxSortMode] = useState<TxSortMode>('time_desc')
   const [merchantFilter, setMerchantFilter] = useState('')
+  const merchantFilterInputRef = useRef<HTMLInputElement | null>(null)
 
   const txs = useMemo(() => transactions.filter((t) => t.yearMonth === yearMonth), [transactions, yearMonth])
 
@@ -171,11 +172,20 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
             <ul className="merchantList">
               {topMerchants.map((m) => (
                 <li key={m.merchantName} className="merchantRow">
-                  <div className="merchantRow__name">{m.merchantName}</div>
-                  <div className="merchantRow__meta">
-                    <span className="merchantRow__amount">{formatUsd(m.totalUsd)}</span>
-                    <span className="merchantRow__count">{m.count}×</span>
-                  </div>
+                  <button
+                    type="button"
+                    className="merchantRowButton"
+                    onClick={() => {
+                      setMerchantFilter(m.merchantName)
+                      requestAnimationFrame(() => merchantFilterInputRef.current?.focus())
+                    }}
+                  >
+                    <div className="merchantRow__name">{m.merchantName}</div>
+                    <div className="merchantRow__meta">
+                      <span className="merchantRow__amount">{formatUsd(m.totalUsd)}</span>
+                      <span className="merchantRow__count">{m.count}×</span>
+                    </div>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -205,6 +215,7 @@ export function MonthBreakdown({ yearMonth, transactions, onClear }: Props) {
             <label className="txControl">
               <input
                 className="txControl__input"
+                ref={merchantFilterInputRef}
                 value={merchantFilter}
                 onChange={(e) => setMerchantFilter(e.target.value)}
                 placeholder="Filter…"
