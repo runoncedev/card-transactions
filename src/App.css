@@ -85,6 +85,27 @@
   font-size: 0.95rem;
 }
 
+.dropzone__hint a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(100, 108, 255, 0.7);
+  text-underline-offset: 2px;
+}
+
+.belowDropzoneHint {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.75;
+  text-align: right;
+}
+
+.belowDropzoneHint a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(100, 108, 255, 0.7);
+  text-underline-offset: 2px;
+}
+
 .summaryLine {
   display: flex;
   flex-wrap: wrap;

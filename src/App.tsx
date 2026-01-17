@@ -65,7 +65,7 @@ function App() {
   return (
     <div className="app">
       <header className="appHeader">
-        <h1 className="appTitle">Monthly Spend</h1>
+        <h1 className="appTitle">Deel Card Transactions Viewer</h1>
         <p className="appSubtitle">
           Upload your transactions CSV to see how much you’ve spent each month. No data leaves your browser.
         </p>
@@ -157,6 +157,13 @@ function App() {
 
       <section className="dropzonePanel">
         <FileDropzone onFileText={onFileText} />
+        <div className="belowDropzoneHint">
+          Get the CSV from{' '}
+          <a href="https://app.deel.com/deel-card/transactions" target="_blank" rel="noreferrer">
+            Deel Card Transactions
+          </a>
+          .
+        </div>
       </section>
     </div>
   )
